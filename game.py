@@ -1,9 +1,6 @@
 import pygame
 from player import PlayerSprite
-
-for i in range(0,3):
-	print("hello")
-
+from enemy import EnemySprite
 
 SIZE = 800,600
 
@@ -18,18 +15,21 @@ class Game():
 		self.screen = None
 		self.clock = None
 		self.text_surface = None
-		self.player = PlayerSprite()
+		self.player = PlayerSprite((300,300))
+		self.enemy = EnemySprite((500,500))
 	def load(self):
 		pygame.init()
 		self.screen = pygame.display.set_mode(SIZE)
 		self.clock = pygame.time.Clock()
 		self.player.load()
+		self.enemy.load()
 		return self
 	def update(self,dt,events):
 		if self.screen is None:
 			return
 		self.screen.fill("purple")
 		self.player.update(dt,events,self.screen)
+		self.enemy.update(dt, events, self.screen, self.player.position)
 		pygame.display.flip()
 	def run_game_loop(self):
 		if self.screen is None or self.clock is None:
@@ -43,6 +43,8 @@ class Game():
 		pygame.quit()
 
 def run_game():
+	for _ in range(0,3):
+		print("hello")
 	g = Game().load()
 	g.run_game_loop()
 	print("goodbye")

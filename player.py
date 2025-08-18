@@ -45,14 +45,14 @@ def key_press_to_direction(events, direction):
 
 
 class PlayerSprite():
-	def __init__(self) -> None:
+	def __init__(self, init_pos) -> None:
 		self.image = None
-		self.key = "sprite.jpg"
-		self.position = 300,300
+		self.key = "banana.png"
+		self.position = init_pos
 		self.direction = (0,0)
 	def load(self):
 		self.image = pygame.image.load(self.key)
-		self.image = pygame.transform.scale_by(self.image, 0.5).convert()
+		self.image = pygame.transform.scale_by(self.image, 2).convert()
 	def draw(self,screen):
 		if self.image is None:
 			return
