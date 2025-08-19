@@ -42,6 +42,7 @@ class Game():
 			self.update(dt,events)
 		pygame.quit()
 
+
 def run_game():
 	for _ in range(0,3):
 		print("hello")

@@ -41,11 +41,19 @@ class Node():
 def pos_to_node(pos):
 	return Node(-1, pos)
 
-def is_neighbour(p1,p2):
+
+
+def pos_is_equal(p1,p2):
 	x1,y1 = p1
 	x2,y2 = p2
-	if x1 == x2 and  y1 == y2:
+	return x1 == x2 and y1 == y2
+
+
+def is_neighbour(p1,p2):
+	if not pos_is_equal(p1,p2):
 		return False
+	x1,y1 = p1
+	x2,y2 = p2
 	topleft = (y1 + 1) == y2 and (x1 - 1) == x2
 	topright = (y1 + 1) == y2 and (x1 + 1) == x2
 	bottomright = (y1 - 1) == y2 and (x1 + 1) == x2
@@ -62,25 +70,24 @@ def is_neighbour(p1,p2):
 def filter_neighbours(nodes, current_node):
 	pos = current_node.position
 	filter_function = lambda n: is_neighbour(n.position,pos) 
-	return list(filter(filter_function,nodes))
+	nodes = list(filter(filter_function,nodes))
 
 def calc_distance(p1,p2):
-	# super complicated math right here
-	x1,y1 = p1
-	x2,y2 = p2
-	delta_x = x1 - x2
-	delta_y = y1 - y2
-	return math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
+	x1,y2 = p1
+	x1,y2 = p1
+	return 1
 
-def calculate_value(current_node, neighbour_node):
+def calculate_value(current_node, target_node, neighbour_node):
 	weight = calc_distance(current_node.position, neighbour_node.position)
 	v = current_node.value + weight
 	return v
 
-def visit_neighbours(nodes, current_node):
-	neighbours = filter_neighbours(nodes, current_node=current_node)
-	for n in neighbours:
-		n.value = calculate_value(current_node=current_node, neighbour_node=n)
+def visit_neighbours(nodes, target, current_node):
+	filter_neighbours(nodes, current_node=current_node)
+	for n in nodes:
+		val = calculate_value(current_node=current_node, target_node=target, neighbour_node=n)
+		if n.value < 0 or n.value > val:
+			n.value = val
 	return nodes
 
 def select_node(nodes):
@@ -92,24 +99,52 @@ def select_node(nodes):
 			sel = node
 	return sel
 
+def remove_duplicates(positions):
+	l = []
+	for pos in positions:
+		if pos not in l:
+			l.append(pos)
+	return l
+
 def djikstra_search(target_position, starter_position, positions):
 	visited_nodes = []
-	starter_position = Node(0, starter_position)
+	starter_node = Node(0, starter_position)
 	target_node = Node(-1, target_position)
 	unvisited_nodes = list(map(pos_to_node, positions))
-	unvisited_nodes.append(starter_position)
+	unvisited_nodes.append(starter_node)
 	unvisited_nodes.append(target_node)
+	unvisited_nodes = remove_duplicates(unvisited_nodes)
+	print("target pos", target_node.position)
+	print(starter_node.position, "start pos")
 	while len(unvisited_nodes) > 0:
 		node = select_node(unvisited_nodes)
 		if node is None:
 			print("Error! No nodes left!")
 			break
+		if pos_is_equal(target_node.position, node.position):
+			break
 		visited_nodes.append(node)
-		unvisited_nodes = visit_neighbours(unvisited_nodes, node)
+		unvisited_nodes = visit_neighbours(nodes=unvisited_nodes, target=target_node, current_node=node)
 		unvisited_nodes.remove(node)
 	return visited_nodes
 
 
+def generate_positions(x,y):
+	l = []
+	for i in range(0,x):
+		for j in range(0,y):
+			l.append((i,j))
+	return l
+
+def run_test_case():
+	positions = generate_positions(10,10)
+	print(len(positions))
+	target = (1,9)
+	source = (1,1)
+	result = djikstra_search(target_position=target, starter_position=source, positions=positions)
+	print(len(result))
+	print(result)
+	
 
 
 class EnemySprite():
