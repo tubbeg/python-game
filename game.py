@@ -16,7 +16,7 @@ class Game():
 		self.clock = None
 		self.text_surface = None
 		self.player = PlayerSprite((300,300))
-		self.enemy = EnemySprite((500,500))
+		self.enemy = EnemySprite((500,500), self.player.position)
 	def load(self):
 		pygame.init()
 		self.screen = pygame.display.set_mode(SIZE)
